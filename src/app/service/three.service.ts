@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MeshBasicMaterial, BoxBufferGeometry, PlaneBufferGeometry, SphereBufferGeometry, PerspectiveCamera, TextureLoader, RepeatWrapping, AmbientLight, DirectionalLight, TextGeometry, MeshStandardMaterial, DoubleSide, Mesh, Scene, WebGLRenderer, Fog, OrbitControls, Vector3, Group, FontLoader } from 'three-full';
+import { MeshBasicMaterial, BoxBufferGeometry, PlaneBufferGeometry, SphereBufferGeometry, PCFSoftShadowMap, CullFaceFrontBack, PerspectiveCamera, TextureLoader, RepeatWrapping, AmbientLight, DirectionalLight, TextGeometry, MeshStandardMaterial, DoubleSide, Mesh, Scene, WebGLRenderer, Fog, OrbitControls, Vector3, Group, FontLoader } from 'three-full';
 
 import * as _ from 'lodash'
 
@@ -30,6 +30,7 @@ export class ThreeService {
       side: DoubleSide
     })
     const mesh1 = new Mesh(geometry, material);
+    mesh1.castShadow = true; 
     mesh1.position.y = height / 2;
     this._scene.add(mesh1)
   }
@@ -60,7 +61,8 @@ export class ThreeService {
       side: DoubleSide
     })
 
-    const mesh1 = new Mesh(geometry, material)
+    const mesh1 = new Mesh(geometry, material);
+    mesh1.receiveShadow = true;
     mesh1.rotation.x = -Math.PI / 2
     this._scene.add(mesh1)
   }
@@ -106,6 +108,8 @@ export class ThreeService {
       const mesh1 = new Mesh(text1, material1)
       mesh1.position.set(50, 0, 0)
       const mesh2 = new Mesh(text2, material2)
+      mesh1.castShadow = true; 
+      mesh2.castShadow = true; 
 
       group.add(mesh1)
       group.add(mesh2)
@@ -138,19 +142,23 @@ export class ThreeService {
 
       this._renderer.setSize(window.innerWidth, window.innerHeight);
       this._renderer.setClearColor(0xeeeeee, 1);
+      this._renderer.shadowMap.enabled = true;
+      this._renderer.shadowMap.type = PCFSoftShadowMap;
+      this._renderer.shadowMapCullFace = CullFaceFrontBack;
 
       const webGlElement = window.document.getElementById("webGL");
 
       this._scene.add(new AmbientLight(0xffffff, 0.3));
       const light = new DirectionalLight()
       light.castShadow = true;
-      light.shadow.camera.top = 1000;
-      light.shadow.camera.bottom = - 1000;
-      light.shadow.camera.left = - 1000;
-      light.shadow.camera.right = 1000;
-      light.shadow.mapSize.width = 1000; // default
-      light.shadow.mapSize.height = 1000; // default
-
+      light.shadow.camera.top = 5000;
+      light.shadow.camera.bottom = - 5000;
+      light.shadow.camera.left = - 5000;
+      light.shadow.camera.right = 5000;
+      light.shadow.mapSize.width = 5000; // default
+      light.shadow.mapSize.height = 5000; // default
+      light.shadow.camera.far = 10000;
+      light.position.set(1000, 1000, 1000)
       this._scene.add(light)
       this._controls.maxPolarAngle = 0.9 * Math.PI / 2
       this._controls.maxDistance = 10000
