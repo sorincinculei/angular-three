@@ -38,6 +38,7 @@ export class ThreeService {
   public makeSky = (img) => {
     const texture = new TextureLoader().load(img)
     texture.wrapS = texture.wrapT = RepeatWrapping
+    texture.repeat.set(5, 5);
 
     const geometry = new SphereBufferGeometry(4000, 32, 15)
     const material = new MeshBasicMaterial({
@@ -53,6 +54,7 @@ export class ThreeService {
   public makeFloor= (img) => {
     const texture = new TextureLoader().load(img)
     texture.wrapS = texture.wrapT = RepeatWrapping
+    texture.repeat.set(10, 10);
 
     const geometry = new PlaneBufferGeometry(4000, 4000)
     const material = new MeshStandardMaterial({
